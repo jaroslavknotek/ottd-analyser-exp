@@ -1,0 +1,17 @@
+{
+    "storageAccountName": {
+        "value": "trainplatformsa"
+    },
+    "rawEventsTableName": {
+        "value": "rawevents"
+    },
+    "appInsightsName": {
+        "value": "train-platform-ai"
+    },
+    "functionAppName": {
+        "value": "train-platform-fa"
+    },
+    "eventHubNamespaceName": {
+        "value": "train-platform-eh"
+    }
+}

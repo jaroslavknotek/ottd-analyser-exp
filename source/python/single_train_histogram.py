@@ -2,9 +2,7 @@ import pandas as pd
 from itertools import islice, groupby
 import matplotlib.pyplot as plt
 
-data_path = '../my_data/logs.all'
-data_path = '../my_data/logs.subset'
-data_path = '../my_data/0.log'
+data_path = '../../my_data/0.log'
 
 def print_histogram(x):
         key = x['segmentId']
