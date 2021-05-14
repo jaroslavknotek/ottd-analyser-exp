@@ -6,22 +6,24 @@ data_path = '../my_data/logs.all'
 data_path = '../my_data/logs.subset'
 data_path = '../my_data/0.log'
 
-df = pd.read_json(data_path, lines=True)
+def print_histogram(x):
+        key = x['segmentId']
+        data= x[1]
+        plt.hist(data)
+        plt.savefig("../out/train-delay_{}.png".format(key))
+        plt.clf()
+        
+def pandas_printout(df):
+    df['datediff'] = df['date'].shift(periods=-1) .astype(float)- df['date'].astype(float)
+    df['segmentId'] = df['orderNumberCurrent'].shift(periods=-1).astype(str) + "_" + df['orderNumberCurrent'].astype(str)
+    
+    df.drop(df.tail(1).index,inplace=True)
+    
+    groups = df.groupby(['segmentId'])['datediff'].apply(list).reset_index()
+    
+    
+    groups.apply(func=print_histogram,axis = 1)
 
-# islice because I want to debug it first
-subsequent = islice(zip(df.iterrows(), islice(df.iterrows(),1,None)),500)
-only_rows = [ (row_current[1], row_next[1]) for row_current,row_next in subsequent ]
-diffs = [    (int(rn['date']) - int(rc['date']), str(rc['orderNumberCurrent']) + '_' + str(rn['orderNumberCurrent']) ) for rc,rn in only_rows ] 
+df = pd.read_json(data_path,dtype=False, lines=True)
 
-data = sorted(diffs, key=lambda x: x[1])
-groups = groupby(data, key=lambda x: x[1])
-
-for key, group in groups:
-    data = [x for (x,_) in list(group)]
-    plt.hist(data)
-    plt.savefig("plot_{}.png".format(key))
-    plt.clf()
-
-
-
-
+pandas_printout(df)
