@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <RootNamespace>TrainPlatform.ConsoleLocal</RootNamespace>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
@@ -14,6 +15,10 @@
   <ItemGroup Condition="true">
     <None Update="appsettings.Development.json" CopyToOutputDirectory="Always" />
     <None Update="appsettings.json" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+  <RootNamespace>TrainPlatform.AzureFunctions</RootNamespace>
     <TargetFramework>net5.0</TargetFramework>
     <LangVersion>preview</LangVersion>
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>

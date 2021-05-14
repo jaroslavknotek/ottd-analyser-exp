@@ -175,6 +175,14 @@
                             "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value)]"
                         },
                         {
+                            "name": "EventHubName",
+                            "value": "[variables('clientEventsEventHubName')]"
+                        },
+                        {
+                            "name": "RawEventsTableName",
+                            "value": "[parameters('rawEventsTableName')]"
+                        },
+                        {
                             "name": "clientEventsListenerEventHubConnectionString",
                             "value": "[listkeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', parameters('eventHubNamespaceName'), variables('clientEventsEventHubName'), variables('clientEventsListenerAuthorizationRule')), '2017-04-01').primaryConnectionString]"
                         }
@@ -184,6 +192,14 @@
         }
     ],
     "outputs": {
+        "RawEventsTableName": {
+            "type": "string",
+            "value": "[parameters('rawEventsTableName')]"
+        },
+        "EventHubName": {
+            "type": "string",
+            "value": "[variables('clientEventsEventHubName')]"
+        },
         "StorageAccountConnectionString": {
             "type": "string",
             "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value)]"

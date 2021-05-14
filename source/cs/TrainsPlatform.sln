@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleLocal", "ConsoleLoca
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions", "AzureFunctions\AzureFunctions.csproj", "{FB5A51E8-BABF-4E96-8918-836A4951EBCD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{8A62848B-CE81-4E5A-A3E8-6D0E2884A7DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,17 @@ Global
 		{FB5A51E8-BABF-4E96-8918-836A4951EBCD}.Release|x64.Build.0 = Release|Any CPU
 		{FB5A51E8-BABF-4E96-8918-836A4951EBCD}.Release|x86.ActiveCfg = Release|Any CPU
 		{FB5A51E8-BABF-4E96-8918-836A4951EBCD}.Release|x86.Build.0 = Release|Any CPU
+		{8A62848B-CE81-4E5A-A3E8-6D0E2884A7DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A62848B-CE81-4E5A-A3E8-6D0E2884A7DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A62848B-CE81-4E5A-A3E8-6D0E2884A7DF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8A62848B-CE81-4E5A-A3E8-6D0E2884A7DF}.Debug|x64.Build.0 = Debug|Any CPU
+		{8A62848B-CE81-4E5A-A3E8-6D0E2884A7DF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8A62848B-CE81-4E5A-A3E8-6D0E2884A7DF}.Debug|x86.Build.0 = Debug|Any CPU
+		{8A62848B-CE81-4E5A-A3E8-6D0E2884A7DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A62848B-CE81-4E5A-A3E8-6D0E2884A7DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A62848B-CE81-4E5A-A3E8-6D0E2884A7DF}.Release|x64.ActiveCfg = Release|Any CPU
+		{8A62848B-CE81-4E5A-A3E8-6D0E2884A7DF}.Release|x64.Build.0 = Release|Any CPU
+		{8A62848B-CE81-4E5A-A3E8-6D0E2884A7DF}.Release|x86.ActiveCfg = Release|Any CPU
+		{8A62848B-CE81-4E5A-A3E8-6D0E2884A7DF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
