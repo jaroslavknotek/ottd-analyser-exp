@@ -5,21 +5,19 @@ What is this?
 It is a platform that will store and analyse data related to arrival and departure of trains. 
 
 # Architecture
-The vision, which can change in future, is captured within this diagram
+The vision, which can change in future, is captured within this diagram (which is not yet complete)
 
 ![vision](./imgs/vision.svg)
 
-We will capture the events with an Event Hub, then the data will be extracted by the Ingress and stored within Tables. This path represents our first increment.
-
-Then there is another one which will focus on detection anomalies within ingested data and a notification system that lets us know should any anomaly gets detected. 
-
-The last planned increment is to create front end that will show stored data and explain the anomalies.
+We will capture the events with an Event Hub, then the data will be extracted by the Ingress and stored within Tables. Then we will focus on detection anomalies within ingested data and a notification system that lets us know should any anomaly gets detected along with basic UI showing them.
 
 # Technology Stack
 
 - Azure
 - ARM
 - .net
+- python for some prototyping
+- More to come...
 
 # Data Source 
 
@@ -57,6 +55,12 @@ The `orderNumber` is a number of a record (could be station or a waypoint) withi
 
 # Implementation
 
+In this section I will cover individual increments
+
+## Raw Data Storage
+
+The aim is to s
+
 The project is limited by its costs - 130 Euro per month.
 
 Create a new resource group and deploy the arm template `resources.azrm.json`.
@@ -81,3 +85,10 @@ func new --name "IngressEventHub" --template "eventhub"
 Implement storing the event like [here](../source/cs/Shared/Services/TrainEventsRepository.cs) 
 
 **Note**: The version may change in time, you should use tag `raw-data-ingress` to locate the appropriate version of the codebase. In such codebase you can also find a project `ConsoleApplication` that is used for local debugging/developing purposes.
+
+## Anomaly Calculation
+
+### Calculate the anomalies
+
+### Detect anomalies
+
