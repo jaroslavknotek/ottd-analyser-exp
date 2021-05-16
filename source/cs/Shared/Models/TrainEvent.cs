@@ -6,19 +6,19 @@ namespace TrainsPlatform.Shared.Models
     public class TrainEvent
     {
         [JsonPropertyName("stationId")]
-        public string StationId { get; set; }= null!;
+        public string StationId { get; set; } = null!;
 
         [JsonPropertyName("stationName")]
-        public string StationName { get; set; }= null!;
+        public string StationName { get; set; } = null!;
 
         [JsonPropertyName("vehicleId")]
-        public string VehicleId { get; set; }= null!;
+        public string VehicleId { get; set; } = null!;
 
         [JsonPropertyName("unitNumber")]
-        public string UnitNumber { get; set; }= null!;
-        
+        public string UnitNumber { get; set; } = null!;
+
         [JsonPropertyName("datetime")]
-        public DateTimeOffset DateTime {get;set;}
+        public DateTimeOffset DateTime { get; set; }
 
         [JsonPropertyName("orderNumberCurrent")]
         public int OrderNumberCurrent { get; set; }

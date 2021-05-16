@@ -13,8 +13,8 @@ namespace TrainsPlatform.AzureFunctions
             var host = new HostBuilder()
                 .ConfigureFunctionsWorkerDefaults()
                 .ConfigureHostConfiguration(
-                        configureDelegate=> configureDelegate.AddEnvironmentVariables())
-                .ConfigureServices((context,services)=>
+                        configureDelegate => configureDelegate.AddEnvironmentVariables())
+                .ConfigureServices((context, services) =>
                 {
                     services.AddTrainPlatformShared(context.Configuration);
                 })

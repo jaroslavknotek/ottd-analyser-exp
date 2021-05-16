@@ -13,8 +13,7 @@ using System.Text.Json;
 using TrainsPlatform.Services;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Threading.Channels;
-using TrainsPlatform.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace TrainsPlatform.ConsoleLocal
 {
@@ -45,7 +44,7 @@ namespace TrainsPlatform.ConsoleLocal
         }
 
         private static async Task ReadMessagesAsync(
-            EhWriterReader ehWriterReader, 
+            EhWriterReader ehWriterReader,
             TrainEventsRepository repo)
         {
             var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
@@ -65,10 +64,14 @@ namespace TrainsPlatform.ConsoleLocal
 
     class EventHubOptions
     {
-        public string EventHubName { get; set; }
-        public string ClientEventsSenderEventHubConnectionString { get; set; }
+        [Required]
+        public string EventHubName { get; set; } = null!;
 
-        public string ClientEventsListenerEventHubConnectionString { get; set; }
+        [Required]
+        public string ClientEventsSenderEventHubConnectionString { get; set; } = null!;
+
+        [Required]
+        public string ClientEventsListenerEventHubConnectionString { get; set; } = null!;
     }
     class EhWriterReader
     {
@@ -101,7 +104,7 @@ namespace TrainsPlatform.ConsoleLocal
                 }
                 catch (JsonException)
                 {
-#warning testing only
+                    Console.WriteLine($"Exception while reading event {json}");
                 }
                 if (trainEvent is not null)
                 { yield return trainEvent; }

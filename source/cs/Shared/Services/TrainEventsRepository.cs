@@ -22,7 +22,7 @@ namespace TrainsPlatform.Services
         {
             _tableName = storageOptionsAccessor.Value.RawEventsTableName;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            
+
             CloudStorageAccount storageAccount;
             try
             {

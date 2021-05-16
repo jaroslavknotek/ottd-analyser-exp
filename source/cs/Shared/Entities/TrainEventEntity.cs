@@ -109,7 +109,7 @@ namespace TrainsPlatform.Entities
                 StationId = entity.StationId,
                 StationName = entity.StationName,
                 Type = entity.Type,
-                UnitNumber =entity.UnitNumber,
+                UnitNumber = entity.UnitNumber,
                 VehicleId = entity.VehicleId
             };
         }
