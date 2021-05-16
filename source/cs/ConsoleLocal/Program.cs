@@ -28,20 +28,27 @@ namespace TrainsPlatform.ConsoleLocal
                 .UseEnvironment("Development")
 #endif
                 .ConfigureServices((context, services) =>
-               {
-                   services.AddSingleton<EhWriterReader>();
+                {
+                    services.AddSingleton<EhWriterReader>();
 
-                   services.Configure<EventHubOptions>(context.Configuration);
-                   services.AddTrainPlatformShared(context.Configuration);
+                    services.Configure<EventHubOptions>(context.Configuration);
+                    services.AddTrainPlatformShared(context.Configuration);
 
-               });
+                });
 
             var built = host.Build();
 
             var ehWriterReader = built.Services.GetRequiredService<EhWriterReader>();
             var repo = built.Services.GetRequiredService<TrainEventsRepository>();
             await ehWriterReader.ProduceAsync();
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+            //await ReadMessagesAsync(ehWriterReader, repo);
+        }
+
+        private static async Task ReadMessagesAsync(
+            EhWriterReader ehWriterReader, 
+            TrainEventsRepository repo)
+        {
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
 
             var list = new List<TrainEvent>();
             try

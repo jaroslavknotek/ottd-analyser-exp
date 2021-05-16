@@ -78,5 +78,6 @@ func init "AzureFunctions" --worker-runtime "dotnetIsolated"
 func new --name "IngressEventHub" --template "eventhub"
 ```
 
-TODO created Console Application for debug purposes
-TODO tag the commit
+Implement storing the event like [here](../source/cs/Shared/Services/TrainEventsRepository.cs) 
+
+**Note**: The version may change in time, you should use tag `raw-data-ingress` to locate the appropriate version of the codebase. In such codebase you can also find a project `ConsoleApplication` that is used for local debugging/developing purposes.

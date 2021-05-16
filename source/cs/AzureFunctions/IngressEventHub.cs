@@ -1,14 +1,27 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using TrainsPlatform.Services;
+using TrainsPlatform.Shared.Models;
 
 namespace AzureFunctions
 {
-    public static class IngressEventHub
+    public class IngressEventHub
     {
-        [Function("IngressEventHub")]
-        public static void Run([EventHubTrigger("samples-workitems", Connection = "")] string[] input, FunctionContext context)
+        private readonly TrainEventsRepository _trainEventsRepository;
+
+        public IngressEventHub(TrainEventsRepository trainEventsRepository)
         {
+            _trainEventsRepository = trainEventsRepository ?? throw new ArgumentNullException(nameof(trainEventsRepository));
+        }
+        
+        [Function("IngressEventHub")]
+        public async Task Run(
+            [EventHubTrigger("client-events", Connection = "clientEventsListenerEventHubConnectionString")] TrainEvent[] input, 
+            FunctionContext context)
+        {
+            await _trainEventsRepository.StoreAsync(input);
             var logger = context.GetLogger("IngressEventHub");
             logger.LogInformation($"First Event Hubs triggered message: {input[0]}");
         }

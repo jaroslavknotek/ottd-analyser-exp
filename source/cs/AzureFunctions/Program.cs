@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Azure.Functions.Worker.Configuration;
+using TrainsPlatform.Services;
 
 namespace TrainsPlatform.AzureFunctions
 {
@@ -11,6 +12,12 @@ namespace TrainsPlatform.AzureFunctions
         {
             var host = new HostBuilder()
                 .ConfigureFunctionsWorkerDefaults()
+                .ConfigureHostConfiguration(
+                        configureDelegate=> configureDelegate.AddEnvironmentVariables())
+                .ConfigureServices((context,services)=>
+                {
+                    services.AddTrainPlatformShared(context.Configuration);
+                })
                 .Build();
 
             host.Run();
