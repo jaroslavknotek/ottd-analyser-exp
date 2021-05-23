@@ -3,17 +3,23 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "storageAccountName": { "type": "string" },
-        "rawEventsTableName": { "type": "string" },
         "appInsightsName": { "type": "string" },
         "functionAppName": { "type": "string" },
         "eventHubNamespaceName": { "type": "string" }
     },
     "variables": {
         "storageAccountTableService": "[concat(parameters('storageAccountName'), '/' ,'default')]",
-        "storageAccountTableServiceRawEvents": "[concat(parameters('storageAccountName'), '/' ,'default','/', parameters('rawEventsTableName'))]",
+        "rawEventsTableName":"rawevents",
+        "trainSegmentRegularitiesTableName":"segmentregularities",
+        "trainSegmentAnomaliesTableName":"segmentanomailes",
+        "storageAccountTableServiceRawEvents": "[concat(parameters('storageAccountName'), '/' ,'default','/', variables('rawEventsTableName'))]",
+        "storageAccountTableServiceTrainSegmentAnomalies": "[concat(parameters('storageAccountName'), '/' ,'default','/', variables('trainSegmentAnomaliesTableName'))]",
+        "storageAccountTableServiceTrainSegmentRegularities": "[concat(parameters('storageAccountName'), '/' ,'default','/', variables('trainSegmentRegularitiesTableName'))]",
         "clientEventsEventHubName": "client-events",
         "clientEventsSenderAuthorizationRule": "client-events-sender",
-        "clientEventsListenerAuthorizationRule": "client-events-listener"
+        "clientEventsListenerAuthorizationRule": "client-events-listener",
+        "clientEventsConsumerGroup" : "client-events-processing-consumer-group",
+        "anomaliesConsumerGroup" : "client-events-anomaly-detection-consumer-group"
     },
     "resources": [
         {
@@ -63,7 +69,7 @@
                         },
                         {
                             "type": "consumerGroups",
-                            "name": "client-events-processing-consumer-group",
+                            "name": "[variables('clientEventsConsumerGroup')]",
                             "dependsOn": [
                                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubNamespaceName'), variables('clientEventsEventHubName'))]"
                             ],
@@ -72,7 +78,7 @@
                         },
                         {
                             "type": "consumerGroups",
-                            "name": "client-events-anomaly-detection-consumer-group",
+                            "name": "[variables('anomaliesConsumerGroup')]",
                             "dependsOn": [
                                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubNamespaceName'), variables('clientEventsEventHubName'))]"
                             ],
@@ -115,6 +121,22 @@
                     "resources": [
                         {
                             "name": "[variables('storageAccountTableServiceRawEvents')]",
+                            "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+                            "apiVersion": "2019-06-01",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Storage/storageAccounts/tableServices', parameters('storageAccountName') , 'default')]"
+                            ]
+                        },
+                        {
+                            "name": "[variables('storageAccountTableServiceTrainSegmentAnomalies')]",
+                            "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+                            "apiVersion": "2019-06-01",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Storage/storageAccounts/tableServices', parameters('storageAccountName') , 'default')]"
+                            ]
+                        },
+                        {
+                            "name": "[variables('storageAccountTableServiceTrainSegmentRegularities')]",
                             "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
                             "apiVersion": "2019-06-01",
                             "dependsOn": [
@@ -180,11 +202,27 @@
                         },
                         {
                             "name": "RawEventsTableName",
-                            "value": "[parameters('rawEventsTableName')]"
+                            "value": "[variables('rawEventsTableName')]"
+                        },
+                        {
+                            "name": "trainSegmentAnomaliesTableName",
+                            "value": "[variables('trainSegmentAnomaliesTableName')]"
+                        },
+                        {
+                            "name": "trainSegmentRegularitiesTableName",
+                            "value": "[variables('trainSegmentRegularitiesTableName')]"
                         },
                         {
                             "name": "clientEventsListenerEventHubConnectionString",
                             "value": "[listkeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', parameters('eventHubNamespaceName'), variables('clientEventsEventHubName'), variables('clientEventsListenerAuthorizationRule')), '2017-04-01').primaryConnectionString]"
+                        },
+                        {
+                            "name": "clientEventsConsumerGroup",
+                            "value": "[variables('clientEventsConsumerGroup')]"
+                        },
+                        {
+                            "name": "anomaliesConsumerGroup",
+                            "value": "[variables('anomaliesConsumerGroup')]"
                         }
                     ]
                 }
@@ -194,7 +232,7 @@
     "outputs": {
         "RawEventsTableName": {
             "type": "string",
-            "value": "[parameters('rawEventsTableName')]"
+            "value": "[variables('rawEventsTableName')]"
         },
         "EventHubName": {
             "type": "string",

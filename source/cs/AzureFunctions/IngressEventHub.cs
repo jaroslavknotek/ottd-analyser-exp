@@ -18,7 +18,10 @@ namespace AzureFunctions
 
         [Function("IngressEventHub")]
         public async Task Run(
-            [EventHubTrigger("client-events", Connection = "clientEventsListenerEventHubConnectionString")] TrainEvent[] input,
+            [EventHubTrigger(
+                "client-events", 
+                Connection = "clientEventsListenerEventHubConnectionString", 
+                ConsumerGroup = "client-events-processing-consumer-group")] TrainEvent[] input,
             FunctionContext context)
         {
             await _trainEventsRepository.StoreAsync(input);

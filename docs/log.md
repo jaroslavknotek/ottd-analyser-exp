@@ -88,7 +88,22 @@ Implement storing the event like [here](../source/cs/Shared/Services/TrainEvents
 
 ## Anomaly Calculation
 
+In this section, we will add a trivial anomaly detection module (that may be improved later). The anomaly detection is trivial because of our assumption that the train track never changes and if it does, then we say that it is different train and we start from scratch disregarding all the data prior to the change.
+
+![vision](./imgs/iteration_2.svg)
+
+Few components will be added. 
+- Table of regular data that we will use to calculate anomalies from
+- Table of found anomalies
+- Regularity calculator job.
+
+We start with slightly changing the infrastructure - we will need to utilize [consumer groups](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-features#consumer-groups) so we need to create them and add them to the function config in the arm template. Additionally, we add the tables of segment regularities and then the anomalies themselves.
+
 ### Calculate the anomalies
+
+- stream KN
+- clustering
+- 
 
 ### Detect anomalies
 

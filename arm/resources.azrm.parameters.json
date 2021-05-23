@@ -2,9 +2,6 @@
     "storageAccountName": {
         "value": "trainplatformsa"
     },
-    "rawEventsTableName": {
-        "value": "rawevents"
-    },
     "appInsightsName": {
         "value": "train-platform-ai"
     },

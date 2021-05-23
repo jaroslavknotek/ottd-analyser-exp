@@ -13,7 +13,6 @@ using System.Text.Json;
 using TrainsPlatform.Services;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.ComponentModel.DataAnnotations;
 
 namespace TrainsPlatform.ConsoleLocal
 {
@@ -61,35 +60,25 @@ namespace TrainsPlatform.ConsoleLocal
             await repo.StoreAsync(list);
         }
     }
-
-    class EventHubOptions
-    {
-        [Required]
-        public string EventHubName { get; set; } = null!;
-
-        [Required]
-        public string ClientEventsSenderEventHubConnectionString { get; set; } = null!;
-
-        [Required]
-        public string ClientEventsListenerEventHubConnectionString { get; set; } = null!;
-    }
     class EhWriterReader
     {
         private readonly string _consumerConnectionString;
         private readonly string _producerConnectionString;
+        private readonly string _eventProcessigConsumerGroup;
         private readonly string _eventHubName;
 
         public EhWriterReader(IOptions<EventHubOptions> ehOptionsAccessor)
         {
             _consumerConnectionString = ehOptionsAccessor.Value.ClientEventsListenerEventHubConnectionString;
             _producerConnectionString = ehOptionsAccessor.Value.ClientEventsSenderEventHubConnectionString;
+            _eventProcessigConsumerGroup = ehOptionsAccessor.Value.EventProcessingConsumerGroup;
             _eventHubName = ehOptionsAccessor.Value.EventHubName;
         }
 
         public async IAsyncEnumerable<TrainEvent> ReadAsync([EnumeratorCancellation] CancellationToken cancellationToken)
         {
             var consumer = new EventHubConsumerClient(
-                EventHubConsumerClient.DefaultConsumerGroupName,
+                _eventProcessigConsumerGroup,
                 _consumerConnectionString);
 
             await foreach (var eventData in consumer.ReadEventsAsync(cancellationToken))
@@ -113,10 +102,9 @@ namespace TrainsPlatform.ConsoleLocal
         public async Task ProduceAsync()
         {
             await using var producerClient = new EventHubProducerClient(_producerConnectionString, _eventHubName);
-            // Create a batch of events 
+            
             using EventDataBatch eventBatch = await producerClient.CreateBatchAsync();
 
-            // Add events to the batch. An event is a represented by a collection of bytes and metadata. 
             var trainEvent = new TrainEvent
             {
                 DateTime = DateTimeOffset.Now,
@@ -131,7 +119,6 @@ namespace TrainsPlatform.ConsoleLocal
             var json = JsonSerializer.Serialize(trainEvent);
             eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes(json)));
 
-            // Use the producer client to send the batch of events to the event hub
             await producerClient.SendAsync(eventBatch);
         }
     }
