@@ -101,9 +101,22 @@ We start with slightly changing the infrastructure - we will need to utilize [co
 
 ### Calculate the anomalies
 
-- stream KN
-- clustering
-- 
+What is an anomaly exactly in this context?
+
+Trains go from a station A, to a station B, to a station Z. We track the time between points p_1 and p_2 and time spent there. 
+
+Assumptions:
+- Data may be slightly changing over time 
+
+Goal:
+- Track the worst case.
+
+We can therefore start with a trivial solution. Digging through the data I came up with an idea that anything outside the +-10% of the distance from the median is an anomaly. The experiments shows that it may work. 
+
+Two excerpts:
+![Ex1](./imgs/anomaly_example_1.png)
+![Ex2](./imgs/anomaly_example_2.png)
 
 ### Detect anomalies
+
 
