@@ -1,6 +1,8 @@
 using System;
 using System.Globalization;
+
 using Microsoft.Azure.Cosmos.Table;
+
 using TrainsPlatform.Shared.Models;
 
 namespace TrainsPlatform.Entities

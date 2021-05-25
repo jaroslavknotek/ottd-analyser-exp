@@ -1,7 +1,9 @@
 using System;
 using System.Threading.Tasks;
+
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+
 using TrainsPlatform.Services;
 using TrainsPlatform.Shared.Models;
 
@@ -19,8 +21,8 @@ namespace AzureFunctions
         [Function("IngressEventHub")]
         public async Task Run(
             [EventHubTrigger(
-                "client-events", 
-                Connection = "clientEventsListenerEventHubConnectionString", 
+                "client-events",
+                Connection = "clientEventsListenerEventHubConnectionString",
                 ConsumerGroup = "client-events-processing-consumer-group")] TrainEvent[] input,
             FunctionContext context)
         {

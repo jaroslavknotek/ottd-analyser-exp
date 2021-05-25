@@ -1,12 +1,13 @@
-using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+
 using Microsoft.Azure.Cosmos.Table;
-using TrainsPlatform.Shared.Models;
-using TrainsPlatform.Entities;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using TrainsPlatform.Services;
+
+using TrainsPlatform.Entities;
+using TrainsPlatform.Shared.Models;
 
 namespace TrainsPlatform.Services
 {
@@ -33,7 +34,7 @@ namespace TrainsPlatform.Services
                 throw;
             }
 
-            CloudTableClient tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
 
             _table = tableClient.GetTableReference(_tableName);
             if (!_table.Exists())

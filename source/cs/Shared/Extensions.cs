@@ -1,8 +1,10 @@
+using System.Collections.Generic;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TrainsPlatform.Shared.Models;
+
 using TrainsPlatform.Services;
-using System.Collections.Generic;
+using TrainsPlatform.Shared.Models;
 
 namespace TrainsPlatform.Services
 {

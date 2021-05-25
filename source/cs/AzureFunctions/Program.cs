@@ -1,7 +1,9 @@
 using System.Threading.Tasks;
+
+using Microsoft.Azure.Functions.Worker.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Azure.Functions.Worker.Configuration;
+
 using TrainsPlatform.Services;
 
 namespace TrainsPlatform.AzureFunctions
