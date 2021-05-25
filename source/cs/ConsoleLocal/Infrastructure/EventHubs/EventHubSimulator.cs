@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-using TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs.Abstractions;
+using TrainsPlatform.Infrastructure.Abstractions;
 
 namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs
 {

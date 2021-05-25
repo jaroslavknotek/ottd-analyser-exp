@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TrainsPlatform.ConsoleLocal.Infrastructure.Models
+namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventReader.Models
 {
     public class TrainEventsReaderOptions
     {

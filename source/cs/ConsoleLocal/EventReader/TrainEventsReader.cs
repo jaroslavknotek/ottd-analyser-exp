@@ -8,24 +8,23 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 
 using TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs;
-using TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs.Abstractions;
-using TrainsPlatform.ConsoleLocal.Infrastructure.Models;
-using TrainsPlatform.Services;
+using TrainsPlatform.ConsoleLocal.Infrastructure.EventReader.Models;
+using TrainsPlatform.Infrastructure.Abstractions;
 using TrainsPlatform.Shared.Models;
 
-namespace TrainsPlatform.ConsoleLocal.Infrastructure
+namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventReader
 {
     public class TrainEventsReader
     {
         private readonly string _eventDirectory;
-        private readonly EventHubWriterReader<TrainEvent> _eventHubReaderWriter;
+        private readonly IEventHubWriterReader<TrainEvent> _eventHubReaderWriter;
 
         public TrainEventsReader(
             IEventHubFactory eventHubFactory,
             IOptions<TrainEventsReaderOptions> readerOptions)
         {
             _eventDirectory = readerOptions.Value.EventDirectory;
-            _eventHubReaderWriter = eventHubFactory.GetClientEventsEventHub();
+            _eventHubReaderWriter = eventHubFactory.GetClientEventsEventHub<TrainEvent>();
         }
 
         public async Task ReadEventsToBufferAsync(CancellationToken cancellationToken = default)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs.Abstractions
+namespace TrainsPlatform.Infrastructure.Abstractions
 {
     public interface IEventHub
     {

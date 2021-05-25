@@ -50,9 +50,7 @@ namespace TrainsPlatform.Services
                 throw new ArgumentNullException(nameof(trainEvents));
             }
 
-
             var batch = new TableBatchOperation();
-
 
             foreach (var trainEventBatch in trainEvents.Batch(100))
             {

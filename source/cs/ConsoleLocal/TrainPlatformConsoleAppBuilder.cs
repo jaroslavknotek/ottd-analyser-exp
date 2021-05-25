@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using TrainsPlatform.ConsoleLocal.Infrastructure;
 using TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs;
-using TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs.Abstractions;
 using TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs.Models;
-using TrainsPlatform.ConsoleLocal.Infrastructure.Models;
+using TrainsPlatform.ConsoleLocal.Infrastructure.EventReader;
+using TrainsPlatform.ConsoleLocal.Infrastructure.EventReader.Models;
+using TrainsPlatform.Infrastructure.Abstractions;
 using TrainsPlatform.Services;
 using TrainsPlatform.Shared.Models;
 
@@ -54,7 +54,7 @@ namespace TrainsPlatform.ConsoleLocal
             var reader = built.Services.GetRequiredService<TrainEventsReader>();
 
             var buffer = built.Services.GetRequiredService<IEventHubFactory>()
-                .GetClientEventsEventHub();
+                .GetClientEventsEventHub<TrainEvent>();
 
             var trainEventsRepository = built.Services.GetRequiredService<TrainEventsRepository>();
 
@@ -62,14 +62,12 @@ namespace TrainsPlatform.ConsoleLocal
             {
                 await foreach (var item in buffer.ReadEventsAsync(cancellationToken))
                 {
-                    Console.WriteLine($"{item.VehicleId}-{item.StationId}-{item.DateTime}");
+                    // not particulary effective
+                    await trainEventsRepository.StoreAsync(new[] { item });
                 }
             }, cancellationToken);
 
             var loadingTask = Task.Run(async () => await reader.ReadEventsToBufferAsync(cancellationToken), cancellationToken);
-
-
-
 
             await Task.WhenAll(eventReadingTask, loadingTask);
         }

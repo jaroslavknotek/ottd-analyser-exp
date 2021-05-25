@@ -7,13 +7,12 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-using TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs.Abstractions;
+using TrainsPlatform.Infrastructure.Abstractions;
 using TrainsPlatform.Services;
-using TrainsPlatform.Shared.Models;
 
 namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs
 {
-    public class EventHubWriterReader<T>
+    public class EventHubWriterReader<T> : IEventHubWriterReader<T>
         where T : new()
     {
         private readonly IEventHub _eventHub;
@@ -23,12 +22,12 @@ namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs
             _eventHub = eventHub;
         }
 
-        public async Task WriteAsync(TrainEvent evnt, CancellationToken cancellationToken = default)
+        public async Task WriteAsync(T evnt, CancellationToken cancellationToken = default)
         {
             await WriteBatchAsync(new[] { evnt }, cancellationToken);
         }
 
-        public async Task WriteBatchAsync(IEnumerable<TrainEvent> events, CancellationToken cancellationToken = default)
+        public async Task WriteBatchAsync(IEnumerable<T> events, CancellationToken cancellationToken = default)
         {
 
             var batches = events.Batch(100);

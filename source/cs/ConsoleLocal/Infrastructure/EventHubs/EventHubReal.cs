@@ -8,7 +8,7 @@ using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Consumer;
 using Azure.Messaging.EventHubs.Producer;
 
-using TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs.Abstractions;
+using TrainsPlatform.Infrastructure.Abstractions;
 
 namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs
 {
