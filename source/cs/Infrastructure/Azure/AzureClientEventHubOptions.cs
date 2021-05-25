@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs.Models
+namespace TrainsPlatform.Infrastructure.Azure
 {
-    public class EventHubOptions
+    public class AzureClientEventHubOptions
     {
         [Required]
         public string EventHubName { get; set; } = null!;

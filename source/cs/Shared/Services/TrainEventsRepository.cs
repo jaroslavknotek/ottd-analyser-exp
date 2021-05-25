@@ -7,40 +7,21 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using TrainsPlatform.Entities;
+using TrainsPlatform.Infrastructure.Abstractions;
+using TrainsPlatform.Shared.Factories;
 using TrainsPlatform.Shared.Models;
 
 namespace TrainsPlatform.Services
 {
     public class TrainEventsRepository
     {
-        private readonly ILogger<TrainEventsRepository> _logger;
-        private readonly CloudTable _table;
+        private readonly IStorageTableRepository<TrainEvent> _table;
 
-        private readonly string _tableName;
         public TrainEventsRepository(
-            IOptions<StorageOptions> storageOptionsAccessor,
+            InfrastructureFactory factory,
             ILogger<TrainEventsRepository> logger)
         {
-            _tableName = storageOptionsAccessor.Value.RawEventsTableName;
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-            CloudStorageAccount storageAccount;
-            try
-            {
-                storageAccount = CloudStorageAccount.Parse(storageOptionsAccessor.Value.StorageAccountConnectionString);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
-
-            _table = tableClient.GetTableReference(_tableName);
-            if (!_table.Exists())
-            {
-                throw new ArgumentException($"Table {_tableName} does not exist. Please, first create the table");
-            }
+            _table = factory.GetClientEventsTable();
         }
 
         public async Task StoreAsync(IEnumerable<TrainEvent> trainEvents)
@@ -50,26 +31,7 @@ namespace TrainsPlatform.Services
                 throw new ArgumentNullException(nameof(trainEvents));
             }
 
-            var batch = new TableBatchOperation();
-
-            foreach (var trainEventBatch in trainEvents.Batch(100))
-            {
-                foreach (var trainEvent in trainEventBatch)
-                {
-                    var entity = TrainEventEntity.FromTrainEvent(trainEvent);
-                    batch.Insert(entity);
-                }
-
-                try
-                {
-                    await _table.ExecuteBatchAsync(batch);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError($"Unexpected error while saving to {_tableName}: {e}");
-                    throw;
-                }
-            }
+            await _table.WriteBatchAsync(trainEvents);
         }
 
         // public async IAsyncEnumerable<TrainEvent> GetTransportsInADayAsync(DateTimeOffset datetime)

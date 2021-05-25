@@ -11,6 +11,7 @@ using TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs;
 using TrainsPlatform.ConsoleLocal.Infrastructure.EventReader.Models;
 using TrainsPlatform.Infrastructure.Abstractions;
 using TrainsPlatform.Shared.Models;
+using TrainsPlatform.Shared.Factories;
 
 namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventReader
 {
@@ -20,11 +21,11 @@ namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventReader
         private readonly IEventHubWriterReader<TrainEvent> _eventHubReaderWriter;
 
         public TrainEventsReader(
-            IEventHubFactory eventHubFactory,
+            InfrastructureFactory infrastructureFactory,
             IOptions<TrainEventsReaderOptions> readerOptions)
         {
             _eventDirectory = readerOptions.Value.EventDirectory;
-            _eventHubReaderWriter = eventHubFactory.GetClientEventsEventHub<TrainEvent>();
+            _eventHubReaderWriter = infrastructureFactory.GetClientEventsEventHub();
         }
 
         public async Task ReadEventsToBufferAsync(CancellationToken cancellationToken = default)
@@ -49,9 +50,9 @@ namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventReader
 
                     await _eventHubReaderWriter.WriteBatchAsync(events, cancellationToken);
 
-
                     File.Delete(tempFile);
                 }
+                await Task.Delay(TimeSpan.FromMilliseconds(100));
             }
         }
 

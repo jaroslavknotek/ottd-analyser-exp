@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 using TrainsPlatform.Infrastructure.Abstractions;
 
-namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs
+namespace TrainsPlatform.Infrastructure.InMemory
 {
-    public class EventHubSimulator : IEventHub
+    public class InMemoryEventHub : IEventHub
     {
         private readonly Channel<ReadOnlyMemory<byte>> _channel = Channel.CreateBounded<ReadOnlyMemory<byte>>(100);
         public async Task WriteBatchAsync(IEnumerable<ReadOnlyMemory<byte>> items, CancellationToken cancellationToken)

@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TrainsPlatform.Shared.Models
+namespace TrainsPlatform.Infrastructure.Azure
 {
-    public class StorageOptions
+    public class AzureTrainEventsStorageOptions
     {
         [Required]
         public string StorageAccountConnectionString { get; set; } = null!;

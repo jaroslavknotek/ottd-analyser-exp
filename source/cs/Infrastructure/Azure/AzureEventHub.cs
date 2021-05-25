@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 using Azure.Messaging.EventHubs;
@@ -10,14 +11,14 @@ using Azure.Messaging.EventHubs.Producer;
 
 using TrainsPlatform.Infrastructure.Abstractions;
 
-namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs
+namespace TrainsPlatform.Infrastructure.Azure
 {
-    public class EventHubReal : IEventHub, IAsyncDisposable
+    public class AzureEventHub : IEventHub, IAsyncDisposable
     {
         private readonly EventHubConsumerClient _consumer;
         private readonly EventHubProducerClient _producer;
 
-        public EventHubReal(EventHubConsumerClient consumer, EventHubProducerClient producer)
+        public AzureEventHub(EventHubConsumerClient consumer, EventHubProducerClient producer)
         {
             _consumer = consumer;
             _producer = producer;
@@ -25,9 +26,28 @@ namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs
 
         public async IAsyncEnumerable<ReadOnlyMemory<byte>> ReadAsync([EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            await foreach (var eventData in _consumer.ReadEventsAsync(cancellationToken))
+            var parititions = await _consumer.GetPartitionIdsAsync(cancellationToken);
+
+            var channel = Channel.CreateBounded<ReadOnlyMemory<byte>>(100);
+            var readertasks = new List<Task>();
+            foreach (var paritition in parititions)
             {
-                yield return eventData.Data.EventBody.ToMemory();
+                var reader = Task.Run(async () =>
+                 {
+                     await foreach (var eventData in _consumer.ReadEventsFromPartitionAsync(
+                        paritition,
+                        EventPosition.FromEnqueuedTime(DateTime.Now.AddMinutes(-5)),
+                        cancellationToken))
+                     {
+                         await channel.Writer.WriteAsync(eventData.Data.EventBody.ToMemory());
+                     }
+                 }, cancellationToken);
+                readertasks.Add(reader);
+            }
+
+            await foreach (var item in channel.Reader.ReadAllAsync(cancellationToken))
+            {
+                yield return item;
             }
         }
 

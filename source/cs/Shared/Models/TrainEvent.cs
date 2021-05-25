@@ -26,7 +26,7 @@ namespace TrainsPlatform.Shared.Models
         [JsonPropertyName("orderNumberTotal")]
         public int OrderNumberTotal { get; set; }
 
-        [JsonPropertyName("Type")]
+        [JsonPropertyName("type")]
         public string Type { get; set; } = null!;
     }
 }

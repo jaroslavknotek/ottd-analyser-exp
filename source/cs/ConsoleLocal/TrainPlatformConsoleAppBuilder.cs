@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs;
-using TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs.Models;
 using TrainsPlatform.ConsoleLocal.Infrastructure.EventReader;
 using TrainsPlatform.ConsoleLocal.Infrastructure.EventReader.Models;
 using TrainsPlatform.Infrastructure.Abstractions;
+using TrainsPlatform.Infrastructure.Azure;
+using TrainsPlatform.Infrastructure.InMemory;
 using TrainsPlatform.Services;
-using TrainsPlatform.Shared.Models;
+using TrainsPlatform.Shared.Factories;
 
 namespace TrainsPlatform.ConsoleLocal
 {
@@ -25,8 +25,8 @@ namespace TrainsPlatform.ConsoleLocal
         }
         public async Task RunAsync(CancellationToken cancellationToken = default)
         {
-            var useRealPlatform = _args.Contains("--use-real");
-            useRealPlatform = true;
+            var useAzure = _args.Contains("--azure");
+            useAzure = true;
             var host = Host
                 .CreateDefaultBuilder(_args)
 #if DEBUG
@@ -37,14 +37,13 @@ namespace TrainsPlatform.ConsoleLocal
                     services.Configure<TrainEventsReaderOptions>(context.Configuration);
 
                     services.AddTrainPlatformShared(context.Configuration);
-                    if (useRealPlatform)
+                    if (useAzure)
                     {
-                        services.Configure<EventHubOptions>(context.Configuration);
-                        services.AddSingleton<IEventHubFactory, EventHubRealFactory>();
+                        services.AddAzureInfrastructure(context.Configuration);
                     }
                     else
                     {
-                        services.AddSingleton<IEventHubFactory, EventHubSimulatorFactory>();
+                        services.AddInMemoryInfrastructure(context.Configuration);
                     }
                     services.AddSingleton<TrainEventsReader>();
                 });
@@ -53,8 +52,9 @@ namespace TrainsPlatform.ConsoleLocal
 
             var reader = built.Services.GetRequiredService<TrainEventsReader>();
 
-            var buffer = built.Services.GetRequiredService<IEventHubFactory>()
-                .GetClientEventsEventHub<TrainEvent>();
+            var buffer = built.Services
+                .GetRequiredService<InfrastructureFactory>()
+                .GetClientEventsEventHub();
 
             var trainEventsRepository = built.Services.GetRequiredService<TrainEventsRepository>();
 
@@ -63,7 +63,15 @@ namespace TrainsPlatform.ConsoleLocal
                 await foreach (var item in buffer.ReadEventsAsync(cancellationToken))
                 {
                     // not particulary effective
-                    await trainEventsRepository.StoreAsync(new[] { item });
+                    try
+                    {
+                        await trainEventsRepository.StoreAsync(new[] { item });
+                        Console.WriteLine($"finished: {item.DateTime}");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.Error.WriteLine(e.Message);
+                    }
                 }
             }, cancellationToken);
 

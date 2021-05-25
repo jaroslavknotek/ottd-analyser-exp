@@ -1,12 +1,6 @@
 using System.Collections.Generic;
 
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
-using TrainsPlatform.Services;
-using TrainsPlatform.Shared.Models;
-
-namespace TrainsPlatform.Services
+namespace TrainsPlatform.Infrastructure
 {
     public static class EnumerableExt
     {
@@ -30,12 +24,4 @@ namespace TrainsPlatform.Services
         }
     }
 
-    public static class TrainPlatformSharedExtensions
-    {
-        public static void AddTrainPlatformShared(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.Configure<StorageOptions>(configuration);
-            services.AddSingleton<TrainEventsRepository>();
-        }
-    }
 }

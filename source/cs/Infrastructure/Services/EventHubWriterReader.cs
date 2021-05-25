@@ -7,8 +7,8 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
+using TrainsPlatform.Infrastructure;
 using TrainsPlatform.Infrastructure.Abstractions;
-using TrainsPlatform.Services;
 
 namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs
 {
@@ -52,5 +52,7 @@ namespace TrainsPlatform.ConsoleLocal.Infrastructure.EventHubs
                 yield return JsonSerializer.Deserialize<T>(json);
             }
         }
+        
+        
     }
 }
