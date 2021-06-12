@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
-using Microsoft.Azure.Cosmos.Table;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 using TrainsPlatform.Entities;
 using TrainsPlatform.Infrastructure.Abstractions;
@@ -21,7 +21,7 @@ namespace TrainsPlatform.Services
             InfrastructureFactory factory,
             ILogger<TrainEventsRepository> logger)
         {
-            _table = factory.GetClientEventsTable();
+            _table = factory.GetClientEventsRepository();
         }
 
         public async Task StoreAsync(IEnumerable<TrainEvent> trainEvents)
@@ -34,28 +34,25 @@ namespace TrainsPlatform.Services
             await _table.WriteBatchAsync(trainEvents);
         }
 
-        // public async IAsyncEnumerable<TrainEvent> GetTransportsInADayAsync(DateTimeOffset datetime)
-        // {
-        //     var partitionKey = datetime.ToString(TransportEntity.PartitionKeyFormat);
-        //     var filterPk = TableQuery.GenerateFilterCondition(
-        //         nameof(TransportEntity.PartitionKey),
-        //         QueryComparisons.Equal, partitionKey);
-
-        //     var query = new TableQuery<TransportEntity>().Where(filterPk);
-        //     TableContinuationToken? continuationToken = null;
-        //     do
-        //     {
-        //         var page = await _table.ExecuteQuerySegmentedAsync(query, continuationToken);
-        //         continuationToken = page.ContinuationToken;
-
-        //         foreach (var entity in page.Results)
-        //         {
-        //             var model = TransportEntity.ToModel(entity);
-        //             yield return model;
-        //         }
-        //     }
-        //     while (continuationToken != null);
-        // }
+        public async IAsyncEnumerable<TrainEvent> GetEventsByVehicleAndOrderAsync(
+            string vehicleId, 
+            int orderNumber,
+            [EnumeratorCancellation]CancellationToken cancellationToken = default)
+        {
+            var partitionKey = TrainEventEntity.CreateEntityPartitionKey(vehicleId,orderNumber);
+            
+            await foreach (var item in _table.ReadAllByPartitionKeyAsync(partitionKey, cancellationToken))
+            {
+                yield return item;
+            }
+        }
+        
+        public async Task DeleteEventsAsync(
+            IEnumerable<TrainEvent> events,
+            CancellationToken cancellationToken = default)
+        {
+            await _table.DeleteBatchAsync(events,cancellationToken);
+        }
     }
 
 

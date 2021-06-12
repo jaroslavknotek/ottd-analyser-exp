@@ -117,6 +117,16 @@ Two excerpts:
 ![Ex1](./imgs/anomaly_example_1.png)
 ![Ex2](./imgs/anomaly_example_2.png)
 
+The solution is far from optimal but it's a good start to iterate over (should we want).
+
+Every time an event comes, we add it to the table, remove the last one and recalculate the regularities.
+
+Then I will search for some cool algorithms that will help me to calculate the median online in an optimal way or I will come up with something completely new.
+
+For that, we will reuse the table that is already in place and store the new events in there. We will need to fix the row keys to find the segments for the given train easily.
+
 ### Detect anomalies
 
+---
 
+I am leaving out the concept of segments. It's hard to enrich each train event with where it came from. The order number suffices for calculating anomalies

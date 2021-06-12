@@ -9,22 +9,20 @@ namespace TrainsPlatform.Entities
 {
     public class TrainEventEntity : TableEntity
     {
-        public const string PartitionKeyFormat = "yyyyMMdd";
-        public TrainEventEntity()
-        {
-
-        }
+        public TrainEventEntity() { }
 
         public TrainEventEntity(
-        string stationId,
-        string stationName,
-        string vehicleId,
-        string unitNumber,
-        DateTimeOffset dateTime,
-        int orderNumberCurrent,
-        int orderNumberTotal,
-        string type)
-            : base(vehicleId, dateTime.ToString("s"))
+            string partitionKey,
+            string rowKey,
+            string stationId,
+            string stationName,
+            string vehicleId,
+            string unitNumber,
+            DateTimeOffset dateTime,
+            int orderNumberCurrent,
+            int orderNumberTotal,
+            string type)
+            : base(partitionKey, rowKey)
         {
             if (string.IsNullOrEmpty(stationId))
             {
@@ -84,8 +82,13 @@ namespace TrainsPlatform.Entities
             {
                 throw new ArgumentNullException(nameof(trainEvent));
             }
-
+            var rowKey = CreateEntityRowKey(trainEvent.DateTime);
+            var partitionKey = CreateEntityPartitionKey(
+                trainEvent.VehicleId,
+                trainEvent.OrderNumberCurrent);
             return new TrainEventEntity(
+                partitionKey,
+                rowKey,
                 trainEvent.StationId,
                 trainEvent.StationName,
                 trainEvent.VehicleId,
@@ -114,6 +117,17 @@ namespace TrainsPlatform.Entities
                 UnitNumber = entity.UnitNumber,
                 VehicleId = entity.VehicleId
             };
+        }
+        
+        public static string CreateEntityRowKey(DateTimeOffset datetimeOffset)
+        {
+            var timestamp = datetimeOffset.ToString("s");
+            return timestamp;
+        }
+
+        public static string CreateEntityPartitionKey(string vehicleId, int orderNumber)
+        {
+            return $"{vehicleId}_{orderNumber}";
         }
     }
 }

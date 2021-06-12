@@ -21,7 +21,7 @@ namespace TrainsPlatform.Shared.Factories
         private readonly ConcurrentDictionary<string, IStorageTable> _storageTables = new();
 
         public InfrastructureFactory(
-            IEventHubFactory eventHubFactory, 
+            IEventHubFactory eventHubFactory,
             IStorageTableFactory storageTableFactory)
         {
             _eventHubFactory = eventHubFactory;
@@ -36,15 +36,16 @@ namespace TrainsPlatform.Shared.Factories
             return new EventHubWriterReader<TrainEvent>(eventHub);
         }
 
-        public IStorageTableRepository<TrainEvent> GetClientEventsTable() 
+        public IStorageTableRepository<TrainEvent> GetClientEventsRepository()
         {
-            var table = _storageTables.GetOrAdd("client-events-table", (_) =>
-                _storageTableFactory.GetClientEventsTable()
+            var table = _storageTables.GetOrAdd(
+                "client-events-table",
+                (_) => _storageTableFactory.GetClientEventsTable()
             );
-
-            return new StorageTableModelReaderWriter<TrainEvent>(table,TrainEventEntity.FromTrainEvent);
+            Func<TrainEvent, TrainEventEntity> mapper = TrainEventEntity.FromTrainEvent;
+            return new StorageTableModelReaderWriter<TrainEvent>(table, mapper);
         }
     }
-    
-    
+
+
 }
